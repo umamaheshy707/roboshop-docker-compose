@@ -1,25 +1,55 @@
+version: '3.8'
+
 networks:
   roboshop:
     driver: bridge
+
 services:
   mongodb:
-    image:mongo
-    container_name:mongo
+    image: mongo
+    container_name: mongo
     networks:
-      -roboshop
+      - roboshop
+
   catalogue:
-    image:catalogue
-    container_name:catalouge
+    image: catalogue
+    container_name: catalogue
     networks:
-      -roboshop
-    depands_on:
-      -mongodb
+      - roboshop
+    depends_on:
+      - mongodb
+
   web:
-    image:web
-    container_name:web
+    image: web
+    container_name: web
     networks:
-      -roboshop
+      - roboshop
     ports:
-    - "80:80"
-    depands_on:
-      -mongodb
+      - "80:80"
+    depends_on:
+      - catalogue
+      - mongodb
+
+  redis:
+    image: redis
+    container_name: redis
+    networks:
+      - roboshop
+
+  user:
+    image: user
+    container_name: user
+    networks:
+      - roboshop
+    depends_on:
+      - redis
+      - mongodb
+  
+  cart:
+    image: cart
+    container_name: cart
+    networks:
+      - roboshop
+    depends_on:
+      - catalogue
+      - redis
